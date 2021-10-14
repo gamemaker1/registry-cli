@@ -123,21 +123,6 @@ Content-Type: application/json
 So to create a `Teacher` entity named Pranav Agate who teaches Math at UP Public
 School, we would make the following API call:
 
-```http
-POST /api/v1/Teacher/invite HTTP/1.1
-Content-Type: application/json
-
-{
-	"name": "Pranav Agate",
-	"phoneNumber": "1122334455",
-	"email": "pranav@upps.in",
-	"subject": "Math",
-	"school": "UP Public School"
-}
-```
-
-To try this out with your example registry, run the following in terminal:
-
 ```sh
 curl --location --request POST 'http://localhost:8081/api/v1/Teacher/invite' \
 	--header 'Content-Type: application/json' \
@@ -191,15 +176,6 @@ client_id=...&username=...&password=...&grant_type=password
 So to authenticate as the `Teacher` entity we just created, we would make the
 following API call:
 
-```http
-POST /auth/realms/sunbird-rc/protocol/openid-connect/token HTTP/1.1
-Content-Type: application/x-www-form-urlencoded
-
-client_id=registry-frontend&username=1234567890&password=opensaber@123&grant_type=password
-```
-
-Using cURL, we would make the following request:
-
 ```sh
 curl --location --request POST 'http://kc:8080/auth/realms/sunbird-rc/protocol/openid-connect/token' \
 	--header 'Content-Type: application/x-www-form-urlencoded' \
@@ -243,13 +219,6 @@ Authorization: Bearer {accessToken}
 So to retrieve the entity we created earlier, we would make the following
 request:
 
-```http
-GET /api/v1/Teacher/1-6c34d42c-2497-4cc5-9eb9-d6242be2ab86 HTTP/1.1
-Authorization: Bearer ...
-```
-
-To try this out with your example registry, run the following in terminal:
-
 ```sh
 curl --location --request GET 'http://localhost:8081/api/v1/Teacher/1-6c34d42c-2497-4cc5-9eb9-d6242be2ab86' \
 	--header 'Authorization: Bearer ...'
@@ -286,28 +255,6 @@ Authorization: Bearer ...
 So to update our `Teacher` to teach Biology instead of Math, we would make the
 following API call:
 
-```http
-PUT /api/v1/Teacher/1-6c34d42c-2497-4cc5-9eb9-d6242be2ab86 HTTP/1.1
-Content-Type: application/json
-Authorization: Bearer ...
-
-{
-	"name": "Pranav Agate",
-	"phoneNumber": "1122334455",
-	"email": "pranav@upps.in",
-	"subject": "Biology",
-	"school": "UP Public School"
-}
-```
-
-> We need to send the whole entity and not just the updated fields because that
-> is how RESTful APIs work. A PUT call should replace the existing record in the
-> database with the new object as-is. To know more about this, take a look at
-> the accepted answer on
-> [this SO question](https://stackoverflow.com/questions/28459418/use-of-put-vs-patch-methods-in-rest-api-real-life-scenarios).
-
-To try this out with your example registry, run the following in terminal:
-
 ```sh
 curl --location --request PUT 'http://localhost:8081/api/v1/Teacher/1-6c34d42c-2497-4cc5-9eb9-d6242be2ab86' \
 	--header 'Content-Type: application/json' \
@@ -321,6 +268,12 @@ curl --location --request PUT 'http://localhost:8081/api/v1/Teacher/1-6c34d42c-2
 		}
 	'
 ```
+
+> We need to send the whole entity and not just the updated fields because that
+> is how RESTful APIs work. A PUT call should replace the existing record in the
+> database with the new object as-is. To know more about this, take a look at
+> the accepted answer on
+> [this SO question](https://stackoverflow.com/questions/28459418/use-of-put-vs-patch-methods-in-rest-api-real-life-scenarios).
 
 ---
 
