@@ -105,7 +105,7 @@ school.
 
 To create an entity, we need to make the following HTTP request:
 
-```
+```http
 POST /api/v1/{entity}/invite HTTP/1.1 Content-Type: application/json
 
 { "fields...": "values..." }
@@ -115,7 +115,7 @@ POST /api/v1/{entity}/invite HTTP/1.1 Content-Type: application/json
 So to create a `Teacher` entity named Pranav Agate who teaches Math at UP Public
 School, we would make the following API call:
 
-```
+```http
 POST /api/v1/Teacher/invite HTTP/1.1
 Content-Type: application/json
 
@@ -130,7 +130,7 @@ Content-Type: application/json
 
 To try this out with your example registry, run the following in terminal:
 
-```
+```sh
 curl --location --request POST 'http://localhost:8081/api/v1/Teacher/invite' \
 	--header 'Content-Type: application/json' \
 	--data-raw '
