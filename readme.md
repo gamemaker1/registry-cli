@@ -270,6 +270,58 @@ This will return the entity's JSON representation as follows:
 
 The `osOwner` field is the User ID of the entity in Keycloak.
 
+## Updating an entity
+
+To update an entity, we need to make the following HTTP request:
+
+```http
+PUT /api/v1/{entity}/{id} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer ...
+
+{ "fields...": "values..." }
+
+```
+
+So to update our `Teacher` to teach Biology instead of Math, we would make the
+following API call:
+
+```http
+PUT /api/v1/Teacher/1-6c34d42c-2497-4cc5-9eb9-d6242be2ab86 HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer ...
+
+{
+	"name": "Pranav Agate",
+	"phoneNumber": "1122334455",
+	"email": "pranav@upps.in",
+	"subject": "Biology",
+	"school": "UP Public School"
+}
+```
+
+> We need to send the whole entity and not just the updated fields because that
+> is how RESTful APIs work. A PUT call should replace the existing record in the
+> database with the new object as-is. To know more about this, take a look at
+> the accepted answer on
+> [this SO question](https://stackoverflow.com/questions/28459418/use-of-put-vs-patch-methods-in-rest-api-real-life-scenarios).
+
+To try this out with your example registry, run the following in terminal:
+
+```sh
+curl --location --request PUT 'http://localhost:8081/api/v1/Teacher/1-6c34d42c-2497-4cc5-9eb9-d6242be2ab86' \
+	--header 'Content-Type: application/json' \
+	--header 'Authorization: Bearer ...' \
+	--data-raw '
+		{
+			"name": "Pranav Agate",
+			"phoneNumber": "1234567890",
+			"subject": "Biology",
+			"school": "UP Public School"
+		}
+	'
+```
+
 ---
 
 > Documentation in progress...
