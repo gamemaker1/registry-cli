@@ -106,7 +106,8 @@ school.
 To create an entity, we need to make the following HTTP request:
 
 ```http
-POST /api/v1/{entity}/invite HTTP/1.1 Content-Type: application/json
+POST /api/v1/{entity}/invite HTTP/1.1
+Content-Type: application/json
 
 { "fields...": "values..." }
 
@@ -142,6 +143,64 @@ curl --location --request POST 'http://localhost:8081/api/v1/Teacher/invite' \
 		}
 	'
 ```
+
+## Authenticating as an entity
+
+Now that we have created an entity, we can authenticate with the server as that
+entity to perform further operations like retrieving, searching, updating and
+attesting.
+
+To authenticate as an entity, we need to make the following request:
+
+```http
+POST /auth/realms/sunbird-rc/protocol/openid-connect/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+client_id=...&username=...&password=...&grant_type=password
+```
+
+So to create authenticate as the `Teacher` entity we just created, we would make
+the following API call:
+
+```http
+POST /auth/realms/sunbird-rc/protocol/openid-connect/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+client_id=registry-frontend&username=1234567890&password=opensaber@123&grant_type=password
+```
+
+Using cURL, we would make the following request:
+
+```sh
+curl --location --request POST 'http://kc:8080/auth/realms/sunbird-rc/protocol/openid-connect/token' \
+	--header 'Content-Type: application/x-www-form-urlencoded'
+	--data 'client_id=registry-frontend' \
+	--data 'username=1234567890' \
+	--data 'password=opensaber@123' \
+	--data 'grant_type=password'
+```
+
+> Here, `registry-frontend` is the preconfigured client we use to make requests
+> to keycloak and `opensaber@123` is the default password for all entities.
+
+This API call should return a JSON object as follows:
+
+```json
+{
+	"access_token": "...",
+	"expires_in": 600,
+	"refresh_expires_in": 600,
+	"refresh_token": "...",
+	"token_type": "Bearer",
+	"not-before-policy": 160888888,
+	"session_state": "...",
+	"scope": "profile email"
+}
+```
+
+The `expires_in` field tells us how many seconds we have before the access token
+expires and we have to make this request again. Save the access token so we can
+use it in future API calls.
 
 ---
 
