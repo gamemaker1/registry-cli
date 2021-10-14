@@ -1,6 +1,7 @@
 # Registry CLI
 
-A CLI to create and interact with Sunbird RC registry instances.
+A CLI to create and interact with
+[Sunbird RC](https://github.com/sunbird-rc/sunbird-rc-core) registry instances.
 
 ## Prerequisites
 
