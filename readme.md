@@ -101,4 +101,48 @@ making a 'claim' (i.e., that the student is from the specified school), which
 can be 'attested' (i.e., confirmed to be true) by a teacher from the same
 school.
 
+## Creating an entity
+
+To create an entity, we need to make the following HTTP request:
+
+```
+POST /api/v1/{entity}/invite HTTP/1.1 Content-Type: application/json
+
+{ "fields...": "values..." }
+
+```
+
+So to create a `Teacher` entity named Pranav Agate who teaches Math at UP Public
+School, we would make the following API call:
+
+```
+POST /api/v1/Teacher/invite HTTP/1.1
+Content-Type: application/json
+
+{
+	"name": "Pranav Agate",
+	"phoneNumber": "1122334455",
+	"email": "pranav@upps.in",
+	"subject": "Math",
+	"school": "UP Public School"
+}
+```
+
+To try this out with your example registry, run the following in terminal:
+
+```
+curl --location --request POST 'http://localhost:8081/api/v1/Teacher/invite' \
+	--header 'Content-Type: application/json' \
+	--data-raw '
+		{
+			"name": "Pranav Agate",
+			"phoneNumber": "1234567890",
+			"subject": "Math",
+			"school": "UP Public School"
+		}
+	'
+```
+
+---
+
 > Documentation in progress...
