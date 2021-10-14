@@ -72,6 +72,10 @@ Run the following command in a directory where you wish to setup the registry.
 For this example, we will use `~/Registries/example/`. (`~` is short form for
 the user's home directory).
 
+> Before creating the registry, add the following line at the end of
+> `/etc/hosts` (on Windows, it is `c:\windows\system32\drivers\etc\hosts`) if
+> you haven't already: `127.0.0.1 kc` (excluding quotes).
+
 ```sh
 # Create and move into the ~/Registries/example directory
 $ mkdir -p ~/Registries/example
@@ -147,6 +151,28 @@ curl --location --request POST 'http://localhost:8081/api/v1/Teacher/invite' \
 	'
 ```
 
+This should return a JSON object as follows:
+
+```json
+{
+	"id": "open-saber.registry.invite",
+	"ver": "1.0",
+	"ets": 1634198998956,
+	"params": {
+		"resmsgid": "",
+		"msgid": "3ee6a76f-d6c8-4262-a7ee-ddbe66fcb127",
+		"err": "",
+		"status": "SUCCESSFUL",
+		"errmsg": ""
+	},
+	"responseCode": "OK",
+	"result": { "Teacher": { "osid": "1-6c34d42c-2497-4cc5-9eb9-d6242be2ab86" } }
+}
+```
+
+Save the `osid` returned, as we will need it to retrieve or update the entity
+later on.
+
 ## Authenticating as an entity
 
 Now that we have created an entity, we can authenticate with the server as that
@@ -162,8 +188,8 @@ Content-Type: application/x-www-form-urlencoded
 client_id=...&username=...&password=...&grant_type=password
 ```
 
-So to create authenticate as the `Teacher` entity we just created, we would make
-the following API call:
+So to authenticate as the `Teacher` entity we just created, we would make the
+following API call:
 
 ```http
 POST /auth/realms/sunbird-rc/protocol/openid-connect/token HTTP/1.1
@@ -176,7 +202,7 @@ Using cURL, we would make the following request:
 
 ```sh
 curl --location --request POST 'http://kc:8080/auth/realms/sunbird-rc/protocol/openid-connect/token' \
-	--header 'Content-Type: application/x-www-form-urlencoded'
+	--header 'Content-Type: application/x-www-form-urlencoded' \
 	--data 'client_id=registry-frontend' \
 	--data 'username=1234567890' \
 	--data 'password=opensaber@123' \
@@ -195,7 +221,7 @@ This API call should return a JSON object as follows:
 	"refresh_expires_in": 600,
 	"refresh_token": "...",
 	"token_type": "Bearer",
-	"not-before-policy": 160888888,
+	"not-before-policy": 160238239,
 	"session_state": "...",
 	"scope": "profile email"
 }
@@ -204,6 +230,45 @@ This API call should return a JSON object as follows:
 The `expires_in` field tells us how many seconds we have before the access token
 expires and we have to make this request again. Save the access token so we can
 use it in future API calls.
+
+## Retrieving an entity
+
+To retrieve an entity, we need to make the following HTTP request:
+
+```http
+GET /api/v1/{entity}/{id} HTTP/1.1
+Authorization: Bearer {accessToken}
+```
+
+So to retrieve the entity we created earlier, we would make the following
+request:
+
+```http
+GET /api/v1/Teacher/1-6c34d42c-2497-4cc5-9eb9-d6242be2ab86 HTTP/1.1
+Authorization: Bearer ...
+```
+
+To try this out with your example registry, run the following in terminal:
+
+```sh
+curl --location --request GET 'http://localhost:8081/api/v1/Teacher/1-6c34d42c-2497-4cc5-9eb9-d6242be2ab86' \
+	--header 'Authorization: Bearer ...'
+```
+
+This will return the entity's JSON representation as follows:
+
+```json
+{
+	"phoneNumber": "1234567890",
+	"school": "UP Public School",
+	"subject": "Math",
+	"name": "Pranav Agate",
+	"osid": "1-6c34d42c-2497-4cc5-9eb9-d6242be2ab86",
+	"osOwner": ["f28bebfa-ff03-40d4-8dea-c9a67318e8c5"]
+}
+```
+
+The `osOwner` field is the User ID of the entity in Keycloak.
 
 ---
 
