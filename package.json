@@ -3,7 +3,7 @@
 	"version": "0.2.0",
 	"description": "A CLI to create and interact with Sunbird RC registry instances",
 	"author": "Vedant K <https://github.com/gamemaker1>",
-	"license": "AGPL-3.0-or-later",
+	"license": "MIT",
 	"main": "source/main.ts",
 	"type": "module",
 	"bin": {
