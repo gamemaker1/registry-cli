@@ -1,6 +1,6 @@
 {
 	"name": "registry-cli",
-	"version": "0.0.2",
+	"version": "0.1.0",
 	"description": "A CLI to create and interact with Sunbird RC registry instances",
 	"author": "Vedant K <https://github.com/gamemaker1>",
 	"license": "AGPL-3.0-or-later",
