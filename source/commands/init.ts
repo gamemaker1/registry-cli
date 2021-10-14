@@ -55,7 +55,7 @@ export default async () => {
 	})
 	Spinner.succeed('We are in a sane environment, good to go!')
 	Print.warn(
-		'Add the following line to your hosts file: `127.0.0.1 kc` (excluding quotes). For a detailed guide on how to do this, see https://www.howtogeek.com/howto/27350/beginner-geek-how-to-edit-your-hosts-file.'
+		'Add the following line at the end of `/etc/hosts` (on Windows, it is `c:\\windows\\system32\\drivers\\etc\\hosts`): `127.0.0.1 kc` (excluding quotes).'
 	)
 
 	// Clone the gist that contains the setup files
