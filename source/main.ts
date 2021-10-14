@@ -4,7 +4,9 @@
 import { Command } from 'commander'
 
 import createRegistryInstance from './commands/init'
-import restartRegistryInstance from './commands/restart'
+import restartContainers from './commands/restart'
+import stopContainers from './commands/stop'
+import startContainers from './commands/start'
 
 // Create the command-and-option parser
 const program = new Command()
@@ -19,13 +21,16 @@ program
 	.action(createRegistryInstance)
 program
 	.command('restart')
-	.description('restarts any running registry instances')
-	.option(
-		'-a, --all',
-		'restart dependent services (keycloak, postgres, elastic search)',
-		false
-	)
-	.action(restartRegistryInstance)
+	.description('restarts registry-related containers')
+	.action(restartContainers)
+program
+	.command('stop')
+	.description('stops registry-related containers')
+	.action(stopContainers)
+program
+	.command('start')
+	.description('starts registry-related containers')
+	.action(startContainers)
 
 // Parse
 program.parseAsync()

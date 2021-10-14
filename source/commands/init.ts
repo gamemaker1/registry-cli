@@ -55,7 +55,7 @@ export default async () => {
 	})
 	spinner.succeed('We are in a sane environment, good to go!')
 	Print.warn(
-		'Add the following line at the end of `/etc/hosts` (on Windows, it is `c:\\windows\\system32\\drivers\\etc\\hosts`): `127.0.0.1 kc` (excluding quotes).'
+		'Add the following line at the end of `/etc/hosts`: `127.0.0.1 kc` (excluding quotes) (on Windows, it is `c:\\windows\\system32\\drivers\\etc\\hosts`).'
 	)
 
 	// Clone the gist that contains the setup files

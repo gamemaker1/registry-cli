@@ -1,4 +1,4 @@
-// Restart registry related containers
+// Stop registry related containers
 
 import Docker from 'dockerode'
 import Chalk from 'chalk'
@@ -24,8 +24,8 @@ export default async () => {
 	// Create a docker instance
 	const docker = new Docker()
 
-	// Restart the containers
-	spinner = spin('Restarting containers...').start()
+	// Stop the containers
+	spinner = spin('Stopping containers...').start()
 	// List running containers
 	await docker
 		.listContainers()
@@ -38,54 +38,50 @@ export default async () => {
 			return containers
 		})
 		.then(async (containers) => {
-			// Parse options and figure out which containers to restart
+			// Parse options and figure out which containers to stop
 			spinner.stop()
-			let { containersToRestart } = (await prompt({
+			let { containersToStop } = (await prompt({
 				type: 'multiselect',
-				name: 'containersToRestart',
-				message: Chalk.reset('Choose the containers to restart'),
+				name: 'containersToStop',
+				message: Chalk.reset('Choose the containers to stop'),
 				choices: containers.map((containerInfo) => {
 					return {
-						name: `${containerInfo.Image} (${containerInfo.Id.slice(0, 12)} | ${
+						name: `${containerInfo.Image} (${containerInfo.Id.slice(0, 12)}) (${
 							containerInfo.Names[0]
 						})`,
 						value: containerInfo.Names[0],
 					}
 				}),
-			})) as { containersToRestart: string[] }
-			spinner = spin('Restarting containers...').start()
+				required: true,
+			})) as { containersToStop: string[] }
+			spinner = spin('Stopping containers...').start()
 
 			for (const containerInfo of containers) {
 				if (
 					containerInfo.Names.some((name) =>
-						containersToRestart.some((containerName) =>
+						containersToStop.some((containerName) =>
 							containerName.includes(name)
 						)
 					)
 				) {
-					spinner.text = `Restarting ${
+					spinner.text = `Stopping ${
 						containerInfo.Names[0]
 					} (${containerInfo.Id.slice(0, 12)})...`
-					await docker.getContainer(containerInfo.Id).restart()
+					await docker.getContainer(containerInfo.Id).stop()
 					spinner.succeed(
-						`Restarted ${containerInfo.Names[0]} (${containerInfo.Id.slice(
+						`Stopped ${containerInfo.Names[0]} (${containerInfo.Id.slice(
 							0,
 							12
 						)})`
 					)
-					spinner = spin('Restarting containers...').start()
+					spinner = spin('Stopping containers...').start()
 				}
 			}
 		})
 		.catch((error: any) => {
-			spinner.fail(Chalk.red(`Failed to restart containers: ${error.message}`))
+			spinner.fail(Chalk.red(`Failed to stop containers: ${error.message}`))
 			process.exit(1)
 		})
-	// Once the restart succeeds, wait 20 seconds for the containers to complete startup
-	spinner.text = 'Waiting for containers to start...'
-	await new Promise<void>((resolve) => {
-		setTimeout(resolve, 20000)
-	})
 
 	spinner.stop()
 	process.exit(0)
