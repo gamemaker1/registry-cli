@@ -16,12 +16,12 @@ const { replaceInFile } = replaceInFilePackage
 import * as Print from '../lib/print'
 
 export default async () => {
-	let Spinner = spin('Checking environment...').start()
+	let spinner = spin('Checking environment...').start()
 	// Create the registry in the current directory
 	const currentDirectory = process.cwd()
 	// Check for git, docker and docker-compose
 	if (!(await doesCommandExist('git'))) {
-		Spinner.fail(
+		spinner.fail(
 			Chalk.red(
 				'Could not find `git` installed on your system. Please install git from https://github.com/git-guides/install-git before running this command.'
 			)
@@ -29,7 +29,7 @@ export default async () => {
 		process.exit(1)
 	}
 	if (!(await doesCommandExist('docker'))) {
-		Spinner.fail(
+		spinner.fail(
 			Chalk.red(
 				'Could not find `docker` installed on your system. Please install docker from https://docs.docker.com/engine/install/ before running this command.'
 			)
@@ -37,7 +37,7 @@ export default async () => {
 		process.exit(1)
 	}
 	if (!(await doesCommandExist('docker-compose'))) {
-		Spinner.fail(
+		spinner.fail(
 			Chalk.red(
 				'Could not find `docker-compose` installed on your system. Please install docker-compose from https://docs.docker.com/compose/install/ before running this command.'
 			)
@@ -46,34 +46,34 @@ export default async () => {
 	}
 	// Check if directory is writable
 	await Fs.access(currentDirectory, FsConstants.W_OK).catch(() => {
-		Spinner.fail(
+		spinner.fail(
 			Chalk.red(
 				`Process does not have write permission for ${currentDirectory}. Try creating a registry instance in a different directory that you have write access to.`
 			)
 		)
 		process.exit(1)
 	})
-	Spinner.succeed('We are in a sane environment, good to go!')
+	spinner.succeed('We are in a sane environment, good to go!')
 	Print.warn(
 		'Add the following line at the end of `/etc/hosts` (on Windows, it is `c:\\windows\\system32\\drivers\\etc\\hosts`): `127.0.0.1 kc` (excluding quotes).'
 	)
 
 	// Clone the gist that contains the setup files
-	Spinner = spin('Downloading setup files...').start()
+	spinner = spin('Downloading setup files...').start()
 	await clone(
 		'https://github.com/gamemaker1/registry-setup-files.git',
 		currentDirectory
 	).catch((error: any) => {
-		Spinner.fail(Chalk.red(`Failed to download setup files: ${error.message}`))
+		spinner.fail(Chalk.red(`Failed to download setup files: ${error.message}`))
 		process.exit(1)
 	})
-	Spinner.succeed('Fetched setup files successfully')
+	spinner.succeed('Fetched setup files successfully')
 
-	// Start elastice search, postgres and keycloak
-	Spinner = spin('Starting elastice search, postgres and keycloak...').start()
+	// Start elastic search, postgres and keycloak
+	spinner = spin('Starting elastic search, postgres and keycloak...').start()
 	// Run the docker-compose up command
 	await Compose.upMany(['es', 'db', 'kc']).catch((error: any) => {
-		Spinner.fail(
+		spinner.fail(
 			Chalk.red(`Failed to start dependent services: ${error.message}`)
 		)
 		process.exit(1)
@@ -82,10 +82,10 @@ export default async () => {
 	await new Promise<void>((resolve) => {
 		setTimeout(resolve, 40000)
 	})
-	Spinner.succeed('Dependent services started successfully')
+	spinner.succeed('Dependent services started successfully')
 
 	// Setup keycloak
-	Spinner = spin('Setting up keycloak...').start()
+	spinner = spin('Setting up keycloak...').start()
 	// The realm-export file is automatically imported by keycloak on startup.
 	// However, keycloak does not export client secret along with it. So we need to
 	// regenerate it and set it in the docker-compose file before starting the registry
@@ -126,9 +126,9 @@ export default async () => {
 			to: `      - sunbird_sso_admin_client_secret=${clientSecret}`,
 		})
 
-		Spinner.succeed('Setup keycloak successfully!')
+		spinner.succeed('Setup keycloak successfully!')
 	} catch (error: any) {
-		Spinner.fail(
+		spinner.fail(
 			Chalk.red(
 				`Failed to regenerate client secret for admin-api client in keycloak: ${error.message}`
 			)
@@ -137,17 +137,17 @@ export default async () => {
 	}
 
 	// Start the registry
-	Spinner = spin('Starting the registry...').start()
+	spinner = spin('Starting the registry...').start()
 	// Run the docker-compose up command
 	await Compose.upOne('rg').catch((error: any) => {
-		Spinner.fail(Chalk.red(`Failed to start the registry: ${error.message}`))
+		spinner.fail(Chalk.red(`Failed to start the registry: ${error.message}`))
 		process.exit(1)
 	})
 	// Once the up command succeeds, wait 40 seconds for the containers to complete startup
 	await new Promise<void>((resolve) => {
 		setTimeout(resolve, 40000)
 	})
-	Spinner.succeed('Registry started successfully')
+	spinner.succeed('Registry started successfully')
 
 	process.exit(0)
 }
