@@ -63,6 +63,9 @@ To install the CLI, run:
 $ npm install --global registry-cli
 ```
 
+> In case you encounter a permission denied/access denied error here, prefix the
+> command with `sudo`: `sudo npm install --global registry-cli`.
+
 ## Getting Started
 
 Run the following command in a directory where you wish to setup the registry.
