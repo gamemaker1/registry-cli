@@ -1,6 +1,6 @@
 {
 	"name": "registry-cli",
-	"version": "0.0.1",
+	"version": "0.0.0",
 	"description": "A CLI to create and interact with Sunbird RC registry instances",
 	"author": "Vedant K <https://github.com/gamemaker1>",
 	"license": "AGPL-3.0-or-later",
@@ -9,8 +9,16 @@
 	"bin": {
 		"registry": "build/main.js"
 	},
+	"files": [
+		"build",
+		"source",
+		"config",
+		"pnpm-lock.yaml",
+		"package.json"
+	],
 	"scripts": {
 		"start": "node --no-warnings --loader ts-node/esm --es-module-specifier-resolution node source/main.ts",
+		"test": "sleep 10",
 		"build": "tsc -p config/typescript.json",
 		"watch": "tsc -p config/typescript.json --watch"
 	},
