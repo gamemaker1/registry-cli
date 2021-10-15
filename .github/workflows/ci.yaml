@@ -1,0 +1,44 @@
+# CI workflow
+
+name: CI
+# Run it on every commit
+on: [push, pull_request]
+
+# Run two jobs
+jobs:
+  # One to build the CLI tool
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v1
+      - name: Setup Node 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      - name: Setup PNPM 6.17.1
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.17.1
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build the CLI
+        run: pnpm build
+  # Another to run the tests
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v1
+      - name: Setup Node 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      - name: Setup PNPM 6.17.1
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.17.1
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run the tests
+        run: pnpm test
