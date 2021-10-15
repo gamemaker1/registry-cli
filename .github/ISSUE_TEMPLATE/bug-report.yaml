@@ -1,0 +1,52 @@
+name: Bug Report
+description: Something's not working properly!
+title: '[BUG]: '
+labels: ['bug', 'triage']
+body:
+  - type: markdown
+    attributes:
+      value:
+        Hi there! Thanks for taking the time to file this bug report and helping
+        make `registry-cli` a better tool for everyone! We'll get back to you as
+        soon as possible.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What went wrong?
+      description:
+        What did you see that went wrong or did not work as you expected it too?
+      placeholder: Tell us what you see!
+      value: 'A bug happened!'
+    validations:
+      required: true
+  - type: dropdown
+    id: cli-version
+    attributes:
+      label: Version
+      description: What version of the Registry CLI are you running?
+      options:
+        - 0.0.1
+        - 0.0.2
+        - 0.1.0
+        - 0.2.0
+        - 0.3.0
+        - 0.4.0
+    validations:
+      required: true
+  - type: dropdown
+    id: node-version
+    attributes:
+      label: What version of Node have you installed?
+      options:
+        - 13.x or earlier
+        - 14.x
+        - 15.x
+        - 16.x
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant CLI output
+      description:
+        Please copy and paste any relevant output from the CLI. This will be
+        automatically formatted into code, so no need for backticks.
+      render: shell
