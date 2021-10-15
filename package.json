@@ -17,7 +17,7 @@
 		"package.json"
 	],
 	"scripts": {
-		"start": "node --no-warnings --loader ts-node/esm --es-module-specifier-resolution node source/main.ts",
+		"start": "TS_NODE_PROJECT=config/typescript.json node --no-warnings --loader ts-node/esm --es-module-specifier-resolution node source/main.ts",
 		"build": "tsc -p config/typescript.json",
 		"watch": "tsc -p config/typescript.json --watch",
 		"test": "prettier --config config/prettier.json --ignore-path .gitignore --check .",

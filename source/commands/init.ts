@@ -13,7 +13,8 @@ import clone from 'git-clone/promise'
 import replaceInFilePackage from 'replace-in-file'
 const { replaceInFile } = replaceInFilePackage
 
-import * as Print from '../lib/print'
+import * as Print from '../utils/print'
+import * as Config from '../utils/config'
 
 export default async () => {
 	let spinner = spin('Checking environment...').start()
@@ -60,13 +61,14 @@ export default async () => {
 
 	// Clone the gist that contains the setup files
 	spinner = spin('Downloading setup files...').start()
-	await clone(
-		'https://github.com/gamemaker1/registry-setup-files.git',
-		currentDirectory
-	).catch((error: any) => {
-		spinner.fail(Chalk.red(`Failed to download setup files: ${error.message}`))
-		process.exit(1)
-	})
+	await clone(Config.setupFilesRepository, currentDirectory).catch(
+		(error: any) => {
+			spinner.fail(
+				Chalk.red(`Failed to download setup files: ${error.message}`)
+			)
+			process.exit(1)
+		}
+	)
 	spinner.succeed('Fetched setup files successfully')
 
 	// Start elastic search, postgres and keycloak

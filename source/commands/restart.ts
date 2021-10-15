@@ -1,12 +1,13 @@
 // Restart registry related containers
 
-import Docker from 'dockerode'
 import Chalk from 'chalk'
 import spin from 'ora'
 import doesCommandExist from 'command-exists'
 
 import EnquirerPackage from 'enquirer'
 const { prompt } = EnquirerPackage
+
+import * as Docker from '../utils/helpers/docker'
 
 export default async () => {
 	let spinner = spin('Checking environment...').start()
@@ -19,68 +20,45 @@ export default async () => {
 		)
 		process.exit(1)
 	}
-	spinner.stop()
 
-	// Create a docker instance
-	const docker = new Docker()
-
-	// Restart the containers
-	spinner = spin('Restarting containers...').start()
 	// List running containers
-	await docker
-		.listContainers()
-		.then((containers) => {
-			if (containers?.length <= 0) {
-				spinner.fail('Could not find running containers')
-				process.exit(1)
-			}
+	let runningContainers = await Docker.listContainers().catch((error: any) => {
+		spinner.fail(Chalk.red(`Failed to list containers: ${error.message}`))
+		process.exit(1)
+	})
 
-			return containers
-		})
-		.then(async (containers) => {
-			// Parse options and figure out which containers to restart
-			spinner.stop()
-			let { containersToRestart } = (await prompt({
-				type: 'multiselect',
-				name: 'containersToRestart',
-				message: Chalk.reset('Choose the containers to restart'),
-				choices: containers.map((containerInfo) => {
-					return {
-						name: `${containerInfo.Image} (${containerInfo.Id.slice(0, 12)} | ${
-							containerInfo.Names[0]
-						})`,
-						value: containerInfo.Names[0],
-					}
-				}),
-			})) as { containersToRestart: string[] }
+	spinner.stop()
+	let { containersToRestart } = (await prompt({
+		type: 'multiselect',
+		name: 'containersToRestart',
+		message: Chalk.reset('Choose the containers to restart'),
+		choices: runningContainers.map((containerInfo) => {
+			return `${containerInfo.name} (${containerInfo.id})`
+		}),
+		// @ts-expect-error -- Weird typings
+		onSubmit() {
+			// @ts-expect-error -- Weird typings
+			if (this.selected.length === 0) {
+				// @ts-expect-error -- Weird typings
+				this.enable(this.focused)
+			}
+		},
+	})) as { containersToRestart: string[] }
+	spinner = spin('Restarting containers...').start()
+
+	for (const containerInfo of runningContainers) {
+		if (
+			containersToRestart.some((containerName) =>
+				containerName.includes(containerInfo.name)
+			)
+		) {
+			spinner.text = `Restarting ${containerInfo.name} (${containerInfo.id})...`
+			await Docker.restartContainer(containerInfo.id)
+
+			spinner.succeed(`Restarted ${containerInfo.name} (${containerInfo.id})`)
 			spinner = spin('Restarting containers...').start()
-
-			for (const containerInfo of containers) {
-				if (
-					containerInfo.Names.some((name) =>
-						containersToRestart.some((containerName) =>
-							containerName.includes(name)
-						)
-					)
-				) {
-					spinner.text = `Restarting ${
-						containerInfo.Names[0]
-					} (${containerInfo.Id.slice(0, 12)})...`
-					await docker.getContainer(containerInfo.Id).restart()
-					spinner.succeed(
-						`Restarted ${containerInfo.Names[0]} (${containerInfo.Id.slice(
-							0,
-							12
-						)})`
-					)
-					spinner = spin('Restarting containers...').start()
-				}
-			}
-		})
-		.catch((error: any) => {
-			spinner.fail(Chalk.red(`Failed to restart containers: ${error.message}`))
-			process.exit(1)
-		})
+		}
+	}
 	// Once the restart succeeds, wait 20 seconds for the containers to complete startup
 	spinner.text = 'Waiting for containers to start...'
 	await new Promise<void>((resolve) => {
