@@ -34,9 +34,12 @@ export default async () => {
 		type: 'multiselect',
 		name: 'containersToStart',
 		message: Chalk.reset('Choose the containers to start'),
-		choices: stoppedContainers.map((containerInfo) => {
-			return `${containerInfo.name} (${containerInfo.id})`
-		}),
+		choices: stoppedContainers.map(
+			(container) =>
+				`${Chalk.yellow(container.id)}: ${Chalk.magenta(
+					container.name
+				)} - ${Chalk.cyan(container.image)}`
+		),
 		// @ts-expect-error -- Weird typings
 		onSubmit() {
 			// @ts-expect-error -- Weird typings
@@ -48,16 +51,22 @@ export default async () => {
 	})) as { containersToStart: string[] }
 	spinner = spin('Starting containers...').start()
 
-	for (const containerInfo of stoppedContainers) {
+	for (const container of stoppedContainers) {
 		if (
 			containersToStart.some((containerName) =>
-				containerName.includes(containerInfo.name)
+				containerName.includes(container.name)
 			)
 		) {
-			spinner.text = `Starting ${containerInfo.name} (${containerInfo.id})...`
-			await Docker.startContainer(containerInfo.id)
+			spinner.text = `Starting ${Chalk.yellow(container.id)} (${Chalk.magenta(
+				container.name
+			)} - ${Chalk.cyan(container.image)})...`
+			await Docker.startContainer(container.id)
 
-			spinner.succeed(`Started ${containerInfo.name} (${containerInfo.id})`)
+			spinner.succeed(
+				`Started ${Chalk.yellow(container.id)} (${Chalk.magenta(
+					container.name
+				)} - ${Chalk.cyan(container.image)})`
+			)
 			spinner = spin('Starting containers...').start()
 		}
 	}

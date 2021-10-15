@@ -16,6 +16,8 @@ type Container = {
 	image: string
 	// Current state of the container
 	status: string
+	// Exposed ports (on the system)
+	ports: number[]
 }
 
 // Method to list and return registry-related containers
@@ -24,21 +26,26 @@ export const listContainers = async (config?: {}): Promise<Container[]> => {
 		.listContainers(config)
 		.then((containers) => {
 			// Convert the returned object to our Container type
-			return containers.map((containerInfo) => {
+			return containers.map((container) => {
 				return {
-					name: containerInfo.Names[0],
-					id: containerInfo.Id.slice(0, 12),
-					image: containerInfo.Image,
-					status: containerInfo.State,
+					name: container.Names[0],
+					id: container.Id.slice(0, 12),
+					image: container.Image,
+					status: container.State,
+					ports: [
+						...new Set(
+							container.Ports.map((port) => port.PublicPort).filter(
+								(port) => !!port
+							)
+						),
+					],
 				}
 			})
 		})
 		.then((containers) => {
 			// Filter out those that are not registry-related
-			return containers.filter((containerInfo) =>
-				Config.containerImages.some((image) =>
-					containerInfo.image.includes(image)
-				)
+			return containers.filter((container) =>
+				Config.containerImages.some((image) => container.image.includes(image))
 			)
 		})
 		.then((containers) => {

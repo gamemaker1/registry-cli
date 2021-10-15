@@ -32,9 +32,12 @@ export default async () => {
 		type: 'multiselect',
 		name: 'containersToRestart',
 		message: Chalk.reset('Choose the containers to restart'),
-		choices: runningContainers.map((containerInfo) => {
-			return `${containerInfo.name} (${containerInfo.id})`
-		}),
+		choices: runningContainers.map(
+			(container) =>
+				`${Chalk.yellow(container.id)}: ${Chalk.magenta(
+					container.name
+				)} - ${Chalk.cyan(container.image)}`
+		),
 		// @ts-expect-error -- Weird typings
 		onSubmit() {
 			// @ts-expect-error -- Weird typings
@@ -46,16 +49,22 @@ export default async () => {
 	})) as { containersToRestart: string[] }
 	spinner = spin('Restarting containers...').start()
 
-	for (const containerInfo of runningContainers) {
+	for (const container of runningContainers) {
 		if (
 			containersToRestart.some((containerName) =>
-				containerName.includes(containerInfo.name)
+				containerName.includes(container.name)
 			)
 		) {
-			spinner.text = `Restarting ${containerInfo.name} (${containerInfo.id})...`
-			await Docker.restartContainer(containerInfo.id)
+			spinner.text = `Restarting ${Chalk.yellow(container.id)} (${Chalk.magenta(
+				container.name
+			)} - ${Chalk.cyan(container.image)})...`
+			await Docker.restartContainer(container.id)
 
-			spinner.succeed(`Restarted ${containerInfo.name} (${containerInfo.id})`)
+			spinner.succeed(
+				`Restarted ${Chalk.yellow(container.id)} (${Chalk.magenta(
+					container.name
+				)} - ${Chalk.cyan(container.image)})`
+			)
 			spinner = spin('Restarting containers...').start()
 		}
 	}

@@ -7,6 +7,7 @@ import createRegistryInstance from './commands/init'
 import restartContainers from './commands/restart'
 import stopContainers from './commands/stop'
 import startContainers from './commands/start'
+import showContainerStatus from './commands/status'
 
 // Create the command-and-option parser
 const program = new Command()
@@ -31,6 +32,10 @@ program
 	.command('start')
 	.description('starts registry-related containers')
 	.action(startContainers)
+program
+	.command('status')
+	.description('shows the status of registry-related containers')
+	.action(showContainerStatus)
 
 // Parse
 program.parseAsync()
