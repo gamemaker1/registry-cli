@@ -1,7 +1,7 @@
 // Helper methods to interact with docker
 
 import Docker from 'dockerode'
-import * as Config from '../config'
+import * as Config from '../utils/config'
 
 // Create a docker instance
 const docker = new Docker()

@@ -7,7 +7,7 @@ import doesCommandExist from 'command-exists'
 import EnquirerPackage from 'enquirer'
 const { prompt } = EnquirerPackage
 
-import * as Docker from '../utils/helpers/docker'
+import * as Docker from '../helpers/docker'
 
 export default async () => {
 	let spinner = spin('Checking environment...').start()
