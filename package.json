@@ -18,9 +18,10 @@
 	],
 	"scripts": {
 		"start": "node --no-warnings --loader ts-node/esm --es-module-specifier-resolution node source/main.ts",
-		"test": "sleep 10",
 		"build": "tsc -p config/typescript.json",
-		"watch": "tsc -p config/typescript.json --watch"
+		"watch": "tsc -p config/typescript.json --watch",
+		"test": "prettier --config config/prettier.json --ignore-path .gitignore --check .",
+		"lint": "prettier --config config/prettier.json --ignore-path .gitignore --write ."
 	},
 	"dependencies": {
 		"chalk": "^4.1.2",
