@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Something's not right!
-title: "[BUG]: Something is wrong"
+title: '[BUG]: Something is wrong'
 labels: bug
 assignees: ''
-
 ---
 
 <!-- Hi there! Thanks for taking the time to file this bug report and help make `registry-cli` a better tool for everyone! We'll get back to you as soon as possible. -->
@@ -16,6 +15,7 @@ A clear and concise description of what the bug is.
 ## To Reproduce
 
 Steps to reproduce the behavior:
+
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
