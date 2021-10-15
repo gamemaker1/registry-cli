@@ -16,7 +16,7 @@ body:
       description:
         What did you see that went wrong or did not work as you expected it too?
       placeholder: Tell us what you see!
-      value: 'A bug happened!'
+      value: A bug happened!
     validations:
       required: true
   - type: dropdown

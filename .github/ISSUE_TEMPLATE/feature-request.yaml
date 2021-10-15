@@ -1,0 +1,30 @@
+name: Feature Request
+description: I want to see something added to the CLI!
+title: '[FEAT]: '
+labels: ['enhancement', 'triage']
+body:
+  - type: markdown
+    attributes:
+      value:
+        Hi there! Thanks for taking the time to request this feature and helping
+        make `registry-cli` a better tool for everyone! We'll get back to you as
+        soon as possible.
+  - type: textarea
+    id: purpose
+    attributes:
+      label: What problem/inconvenience (if any) will this feature solve?
+      placeholder: Why should we add this feature?
+      value:
+        It is inconvenient for me to do .... If we add this feature, it would
+        make it easier to do ....
+    validations:
+      required: false
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Describe the feature clearly.
+      placeholder:
+        Screenshots/GIFs showing a mock up of the feature would be great too!
+      value: Add a new command that does ....
+    validations:
+      required: true
