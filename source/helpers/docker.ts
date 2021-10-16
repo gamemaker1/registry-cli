@@ -22,7 +22,7 @@ type Container = {
 
 // Method to list and return registry-related containers
 export const listContainers = async (
-	config?: unknown
+	config?: Record<string, unknown>
 ): Promise<Container[]> => {
 	return docker
 		.listContainers(config)

@@ -114,7 +114,7 @@ export default async () => {
 		spinner.fail(
 			Chalk.red(
 				`Failed to start dependent services: ${
-					error.message ?? error.err ?? 'unknown error'
+					error.message ?? 'unknown error'
 				}`
 			)
 		)
@@ -168,7 +168,8 @@ export default async () => {
 		})
 
 		spinner.succeed('Setup keycloak successfully!')
-	} catch (error: Error) {
+	} catch (errorObject: unknown) {
+		const error = errorObject as Error
 		spinner.fail(
 			Chalk.red(
 				`Failed to regenerate client secret for admin-api client in keycloak: ${error.message}. Have you edited your hosts file?`
@@ -183,9 +184,7 @@ export default async () => {
 	await Compose.upOne(Config.containerNames[0]).catch((error: Error) => {
 		spinner.fail(
 			Chalk.red(
-				`Failed to start the registry: ${
-					error.message ?? error.err ?? 'unknown error'
-				}`
+				`Failed to start the registry: ${error.message ?? 'unknown error'}`
 			)
 		)
 		process.exit(1)
