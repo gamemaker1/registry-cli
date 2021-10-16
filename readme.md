@@ -14,8 +14,9 @@ Something not working correctly? Something feels wrong? Or want to see a new
 feature added?
 [Open an issue](https://github.com/gamemaker1/registry-cli/issues/new/choose)!
 
-Want to contribute? Read the [contributing](/docs/contributing.md) file to get
-started!
+Want to contribute? Read the
+[contributing](https://github.com/gamemaker1/registry-cli/blob/main/docs/contributing.md)
+file to get started!
 
 ## License
 
