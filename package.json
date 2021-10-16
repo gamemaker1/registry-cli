@@ -7,7 +7,7 @@
 	"main": "source/main.ts",
 	"type": "module",
 	"bin": {
-		"registry": "build/main.js"
+		"registry": "build/source/main.js"
 	},
 	"files": [
 		"build",

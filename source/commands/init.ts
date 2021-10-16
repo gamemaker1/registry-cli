@@ -136,7 +136,7 @@ export default async () => {
 				grant_type: 'password',
 			},
 		}).json()
-		const response: { id: string }[] = await got({
+		const [{ id: clientId }] = await got({
 			method: 'get',
 			url: `${Config.keycloakUri}/auth/admin/realms/${Config.keycloakRealm}/clients`,
 			searchParams: {
@@ -146,7 +146,6 @@ export default async () => {
 				authorization: `Bearer ${accessToken}`,
 			},
 		}).json()
-		const clientId = response[0].id
 		const { value: clientSecret } = await got({
 			method: 'post',
 			url: `${Config.keycloakUri}/auth/admin/realms/${Config.keycloakRealm}/clients/${clientId}/client-secret`,
@@ -158,7 +157,7 @@ export default async () => {
 		// Replace the old client secret with the new one
 		await replaceInFile({
 			files: ['docker-compose.yaml'],
-			from: `/.*${Config.keycloakClientSecretEnvVar}.*/`,
+			from: new RegExp(`.*${Config.keycloakClientSecretEnvVar}.*`),
 			to: `      - ${Config.keycloakClientSecretEnvVar}=${clientSecret}`,
 		})
 
