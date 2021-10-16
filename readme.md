@@ -6,7 +6,7 @@ A CLI to create and interact with
 ## Documentation
 
 View the complete documentation for this tool
-[here](https://github.com/gamemaker1/registry-cli/docs).
+[here](https://github.com/gamemaker1/registry-cli/tree/main/docs).
 
 ## Contributing/Issues
 
