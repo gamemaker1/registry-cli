@@ -2,6 +2,7 @@
 
 import { constants as FsConstants } from 'fs'
 import Fs from 'fs/promises'
+import Path from 'path'
 import Compose from 'docker-compose'
 import Chalk from 'chalk'
 import spin from 'ora'
@@ -13,7 +14,6 @@ import clone from 'git-clone/promise'
 import replaceInFilePackage from 'replace-in-file'
 const { replaceInFile } = replaceInFilePackage
 
-import * as Print from '../utils/print'
 import * as Config from '../utils/config'
 
 export default async () => {
@@ -55,9 +55,6 @@ export default async () => {
 		process.exit(1)
 	})
 	spinner.succeed('We are in a sane environment, good to go!')
-	Print.warn(
-		'Add the following line at the end of `/etc/hosts`: `127.0.0.1 kc` (excluding quotes) (on Windows, it is `c:\\windows\\system32\\drivers\\etc\\hosts`).'
-	)
 
 	// Clone the gist that contains the setup files
 	spinner = spin('Downloading setup files...').start()
@@ -71,10 +68,47 @@ export default async () => {
 	)
 	spinner.succeed('Fetched setup files successfully')
 
+	// Check that the cloned repo contains an `imports` and `schemas` folder, as well as a `docker-compose.yaml` file.
+	spinner = spin('Checking setup files...')
+	await Fs.access(
+		Path.resolve(currentDirectory, 'imports'),
+		FsConstants.F_OK
+	).catch(() => {
+		spinner.fail(
+			Chalk.red(
+				`Setup files do not have an 'imports' folder, used to preconfigure keycloak.`
+			)
+		)
+		process.exit(1)
+	})
+	await Fs.access(
+		Path.resolve(currentDirectory, 'schemas'),
+		FsConstants.F_OK
+	).catch(() => {
+		spinner.fail(
+			Chalk.red(
+				`Setup files do not have an 'schemas' folder, used to add schemas to the registry.`
+			)
+		)
+		process.exit(1)
+	})
+	await Fs.access(
+		Path.resolve(currentDirectory, 'docker-compose.yaml'),
+		FsConstants.W_OK
+	).catch(() => {
+		spinner.fail(
+			Chalk.red(
+				`Setup files do not have an 'docker-compose.yaml' file, used to start the registry and dependent services.`
+			)
+		)
+		process.exit(1)
+	})
+	spinner.succeed('Setup files contain necessary info for starting registry')
+
 	// Start elastic search, postgres and keycloak
 	spinner = spin('Starting elastic search, postgres and keycloak...').start()
 	// Run the docker-compose up command
-	await Compose.upMany(['es', 'db', 'kc']).catch((error: any) => {
+	await Compose.upMany(Config.containerNames.slice(1)).catch((error: any) => {
 		spinner.fail(
 			Chalk.red(`Failed to start dependent services: ${error.message}`)
 		)
@@ -94,19 +128,19 @@ export default async () => {
 	try {
 		const { access_token: accessToken } = await got({
 			method: 'post',
-			url: 'http://kc:8080/auth/realms/master/protocol/openid-connect/token',
+			url: `${Config.keycloakUri}/auth/realms/master/protocol/openid-connect/token`,
 			form: {
 				client_id: 'admin-cli',
-				username: 'admin',
-				password: 'admin',
+				username: Config.keycloakAdminUsername,
+				password: Config.keycloakAdminPassword,
 				grant_type: 'password',
 			},
 		}).json()
 		const response: { id: string }[] = await got({
 			method: 'get',
-			url: 'http://kc:8080/auth/admin/realms/sunbird-rc/clients',
+			url: `${Config.keycloakUri}/auth/admin/realms/${Config.keycloakRealm}/clients`,
 			searchParams: {
-				clientId: 'admin-api',
+				clientId: Config.keycloakAdminClientId,
 			},
 			headers: {
 				authorization: `Bearer ${accessToken}`,
@@ -115,7 +149,7 @@ export default async () => {
 		const clientId = response[0].id
 		const { value: clientSecret } = await got({
 			method: 'post',
-			url: `http://kc:8080/auth/admin/realms/sunbird-rc/clients/${clientId}/client-secret`,
+			url: `${Config.keycloakUri}/auth/admin/realms/${Config.keycloakRealm}/clients/${clientId}/client-secret`,
 			headers: {
 				authorization: `Bearer ${accessToken}`,
 			},
@@ -124,15 +158,15 @@ export default async () => {
 		// Replace the old client secret with the new one
 		await replaceInFile({
 			files: ['docker-compose.yaml'],
-			from: /.*sunbird_sso_admin_client_secret.*/,
-			to: `      - sunbird_sso_admin_client_secret=${clientSecret}`,
+			from: `/.*${Config.keycloakClientSecretEnvVar}.*/`,
+			to: `      - ${Config.keycloakClientSecretEnvVar}=${clientSecret}`,
 		})
 
 		spinner.succeed('Setup keycloak successfully!')
 	} catch (error: any) {
 		spinner.fail(
 			Chalk.red(
-				`Failed to regenerate client secret for admin-api client in keycloak: ${error.message}`
+				`Failed to regenerate client secret for admin-api client in keycloak: ${error.message}. Have you edited your hosts file?`
 			)
 		)
 		process.exit(1)
@@ -141,7 +175,7 @@ export default async () => {
 	// Start the registry
 	spinner = spin('Starting the registry...').start()
 	// Run the docker-compose up command
-	await Compose.upOne('rg').catch((error: any) => {
+	await Compose.upOne(Config.containerNames[0]).catch((error: any) => {
 		spinner.fail(Chalk.red(`Failed to start the registry: ${error.message}`))
 		process.exit(1)
 	})

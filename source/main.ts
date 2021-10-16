@@ -8,12 +8,13 @@ import restartContainers from './commands/restart'
 import stopContainers from './commands/stop'
 import startContainers from './commands/start'
 import showContainerStatus from './commands/status'
+import * as PackageMetadata from '../package.json'
 
 // Create the command-and-option parser
 const program = new Command()
 
 // Set the name
-program.name('registry')
+program.name('registry').version(PackageMetadata.version)
 
 // Register all commands
 program

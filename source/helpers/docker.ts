@@ -31,7 +31,9 @@ export const listContainers = async (config?: {}): Promise<Container[]> => {
 					name: container.Names[0],
 					id: container.Id.slice(0, 12),
 					image: container.Image,
-					status: container.State,
+					status: container.Status.toLowerCase().includes('starting')
+						? 'starting'
+						: container.State,
 					ports: [
 						...new Set(
 							container.Ports.map((port) => port.PublicPort).filter(

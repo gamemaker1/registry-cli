@@ -27,7 +27,6 @@ export default async () => {
 		spinner.fail(Chalk.red(`Failed to list containers: ${error.message}`))
 		process.exit(1)
 	})
-
 	spinner.stop()
 
 	Print.success(Chalk.bold.underline('Registry containers'))
