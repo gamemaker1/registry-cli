@@ -11,9 +11,9 @@
 	},
 	"files": [
 		"build",
-		"source",
-		"config",
-		"pnpm-lock.yaml",
+		"docs",
+		"readme.md",
+		"license.md",
 		"package.json"
 	],
 	"scripts": {
