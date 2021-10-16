@@ -17,12 +17,14 @@
 		"package.json"
 	],
 	"scripts": {
-		"start": "TS_NODE_PROJECT=config/typescript.json node --no-warnings --loader ts-node/esm --es-module-specifier-resolution node source/main.ts",
-		"build": "tsc -p config/typescript.json",
-		"watch": "tsc -p config/typescript.json --watch",
-		"format": "prettier --ignore-path .gitignore --config config/prettier.json --write **/*.{md,yaml,ts}",
-		"lint": "eslint --ignore-path .gitignore --config config/eslint.json --ext .ts --fix .",
-		"test": "eslint --ignore-path .gitignore --config config/eslint.json --ext .ts ."
+		"test": "sh scripts/test.sh",
+		"start": "sh scripts/start.sh",
+		"build": "sh scripts/build.sh",
+		"watch": "sh scripts/watch.sh",
+		"fix:eslint": "sh scripts/fix/eslint.sh",
+		"fix:format": "sh scripts/fix/prettier.sh",
+		"check:eslint": "sh scripts/check/eslint.sh",
+		"check:format": "sh scripts/check/prettier.sh"
 	},
 	"dependencies": {
 		"chalk": "^4.1.2",
