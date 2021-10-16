@@ -87,11 +87,9 @@ const ConfigManager = new Conf({
 })
 
 // If the config file is empty, write the defaults to it
-const configFileContents = await Fs.readFile(ConfigManager.path).catch(
-	(error) => {
-		// Do nothing, instead create and write to the file
-	}
-)
+const configFileContents = await Fs.readFile(ConfigManager.path).catch(() => {
+	// Do nothing, instead create and write to the file
+})
 if (!configFileContents) {
 	await Fs.writeFile(ConfigManager.path, JSON.stringify(defaults, null, 4))
 }
