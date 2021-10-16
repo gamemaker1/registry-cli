@@ -20,8 +20,9 @@
 		"start": "TS_NODE_PROJECT=config/typescript.json node --no-warnings --loader ts-node/esm --es-module-specifier-resolution node source/main.ts",
 		"build": "tsc -p config/typescript.json",
 		"watch": "tsc -p config/typescript.json --watch",
-		"test": "prettier --config config/prettier.json --ignore-path .gitignore --check .",
-		"lint": "prettier --config config/prettier.json --ignore-path .gitignore --write ."
+		"format": "prettier --ignore-path .gitignore --config config/prettier.json --write **/*.{md,yaml,ts}",
+		"lint": "eslint --ignore-path .gitignore --config config/eslint.json --ext .ts --fix .",
+		"test": "eslint --ignore-path .gitignore --config config/eslint.json --ext .ts ."
 	},
 	"dependencies": {
 		"chalk": "^4.1.2",
@@ -40,6 +41,11 @@
 		"@types/command-exists": "^1.2.0",
 		"@types/dockerode": "^3.3.0",
 		"@types/node": "^16.11.0",
+		"@typescript-eslint/eslint-plugin": "^5.0.0",
+		"@typescript-eslint/parser": "^5.0.0",
+		"eslint": "^8.0.1",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-plugin-prettier": "^4.0.0",
 		"prettier": "^2.4.1",
 		"ts-node": "^10.3.0",
 		"typescript": "^4.4.4"
@@ -47,5 +53,6 @@
 	"engines": {
 		"node": "v16.11.0",
 		"pm": "pnpm 6.17.1"
-	}
+	},
+	"prettier": "./config/prettier.json"
 }

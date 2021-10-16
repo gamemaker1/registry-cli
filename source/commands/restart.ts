@@ -22,13 +22,15 @@ export default async () => {
 	}
 
 	// List running containers
-	let runningContainers = await Docker.listContainers().catch((error: any) => {
-		spinner.fail(Chalk.red(`Failed to list containers: ${error.message}`))
-		process.exit(1)
-	})
+	const runningContainers = await Docker.listContainers().catch(
+		(error: Error) => {
+			spinner.fail(Chalk.red(`Failed to list containers: ${error.message}`))
+			process.exit(1)
+		}
+	)
 
 	spinner.stop()
-	let { containersToRestart } = (await prompt({
+	const { containersToRestart } = (await prompt({
 		type: 'multiselect',
 		name: 'containersToRestart',
 		message: Chalk.reset('Choose the containers to restart'),

@@ -8,7 +8,7 @@ import * as Docker from '../helpers/docker'
 import * as Print from '../utils/print'
 
 export default async () => {
-	let spinner = spin('Checking environment...').start()
+	const spinner = spin('Checking environment...').start()
 	// Check for docker
 	if (!(await doesCommandExist('docker'))) {
 		spinner.fail(
@@ -21,9 +21,9 @@ export default async () => {
 
 	// List all containers
 	spinner.text = 'Listing containers...'
-	let allContainers = await Docker.listContainers({
+	const allContainers = await Docker.listContainers({
 		all: true,
-	}).catch((error: any) => {
+	}).catch((error: Error) => {
 		spinner.fail(Chalk.red(`Failed to list containers: ${error.message}`))
 		process.exit(1)
 	})

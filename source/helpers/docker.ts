@@ -21,7 +21,9 @@ type Container = {
 }
 
 // Method to list and return registry-related containers
-export const listContainers = async (config?: {}): Promise<Container[]> => {
+export const listContainers = async (
+	config?: unknown
+): Promise<Container[]> => {
 	return docker
 		.listContainers(config)
 		.then((containers) => {

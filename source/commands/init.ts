@@ -8,7 +8,7 @@ import Chalk from 'chalk'
 import spin from 'ora'
 import got from 'got'
 import doesCommandExist from 'command-exists'
-// @ts-ignore -- No types for this module
+// @ts-expect-error -- No types for this module
 import clone from 'git-clone/promise'
 
 import replaceInFilePackage from 'replace-in-file'
@@ -59,7 +59,7 @@ export default async () => {
 	// Clone the gist that contains the setup files
 	spinner = spin('Downloading setup files...').start()
 	await clone(Config.setupFilesRepository, currentDirectory).catch(
-		(error: any) => {
+		(error: Error) => {
 			spinner.fail(
 				Chalk.red(
 					`Failed to download setup files: ${error.message}. Is the current directory not empty?`
@@ -110,7 +110,7 @@ export default async () => {
 	// Start elastic search, postgres and keycloak
 	spinner = spin('Starting elastic search, postgres and keycloak...').start()
 	// Run the docker-compose up command
-	await Compose.upMany(Config.containerNames.slice(1)).catch((error: any) => {
+	await Compose.upMany(Config.containerNames.slice(1)).catch((error: Error) => {
 		spinner.fail(
 			Chalk.red(
 				`Failed to start dependent services: ${
@@ -168,7 +168,7 @@ export default async () => {
 		})
 
 		spinner.succeed('Setup keycloak successfully!')
-	} catch (error: any) {
+	} catch (error: Error) {
 		spinner.fail(
 			Chalk.red(
 				`Failed to regenerate client secret for admin-api client in keycloak: ${error.message}. Have you edited your hosts file?`
@@ -180,7 +180,7 @@ export default async () => {
 	// Start the registry
 	spinner = spin('Starting the registry...').start()
 	// Run the docker-compose up command
-	await Compose.upOne(Config.containerNames[0]).catch((error: any) => {
+	await Compose.upOne(Config.containerNames[0]).catch((error: Error) => {
 		spinner.fail(
 			Chalk.red(
 				`Failed to start the registry: ${
