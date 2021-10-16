@@ -8,6 +8,7 @@ import restartContainers from './commands/restart'
 import stopContainers from './commands/stop'
 import startContainers from './commands/start'
 import showContainerStatus from './commands/status'
+import showOrChangeConfig from './commands/config'
 import * as PackageMetadata from '../package.json'
 
 // Create the command-and-option parser
@@ -37,6 +38,12 @@ program
 	.command('status')
 	.description('shows the status of registry-related containers')
 	.action(showContainerStatus)
+program
+	.command('config')
+	.argument('[variable]', 'config variable to retrieve', 'all')
+	.argument('[value]', 'value to set on the mentioned config variable')
+	.description('shows/changes the current configuration')
+	.action(showOrChangeConfig)
 
 // Parse
 program.parseAsync()

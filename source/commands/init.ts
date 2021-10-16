@@ -14,7 +14,7 @@ import clone from 'git-clone/promise'
 import replaceInFilePackage from 'replace-in-file'
 const { replaceInFile } = replaceInFilePackage
 
-import * as Config from '../utils/config'
+import Config from '../utils/config'
 
 export default async () => {
 	let spinner = spin('Checking environment...').start()
@@ -58,7 +58,7 @@ export default async () => {
 
 	// Clone the gist that contains the setup files
 	spinner = spin('Downloading setup files...').start()
-	await clone(Config.setupFilesRepository, currentDirectory).catch(
+	await clone(Config.get('setup.repo'), currentDirectory).catch(
 		(error: Error) => {
 			spinner.fail(
 				Chalk.red(
@@ -110,7 +110,9 @@ export default async () => {
 	// Start elastic search, postgres and keycloak
 	spinner = spin('Starting elastic search, postgres and keycloak...').start()
 	// Run the docker-compose up command
-	await Compose.upMany(Config.containerNames.slice(1)).catch((error: Error) => {
+	await Compose.upMany(
+		(Config.get('containers.names') as string[]).slice(1)
+	).catch((error: Error) => {
 		spinner.fail(
 			Chalk.red(
 				`Failed to start dependent services: ${
@@ -134,19 +136,23 @@ export default async () => {
 	try {
 		const { access_token: accessToken } = await got({
 			method: 'post',
-			url: `${Config.keycloakUri}/auth/realms/master/protocol/openid-connect/token`,
+			url: `${Config.get(
+				'keycloak.uri'
+			)}/auth/realms/master/protocol/openid-connect/token`,
 			form: {
 				client_id: 'admin-cli',
-				username: Config.keycloakAdminUsername,
-				password: Config.keycloakAdminPassword,
+				username: Config.get('keycloak.user'),
+				password: Config.get('keycloak.pass'),
 				grant_type: 'password',
 			},
 		}).json()
 		const [{ id: clientId }] = await got({
 			method: 'get',
-			url: `${Config.keycloakUri}/auth/admin/realms/${Config.keycloakRealm}/clients`,
+			url: `${Config.get('keycloak.uri')}/auth/admin/realms/${Config.get(
+				'keycloak.realm'
+			)}/clients`,
 			searchParams: {
-				clientId: Config.keycloakAdminClientId,
+				clientId: Config.get('keycloak.admin-client-id') as string,
 			},
 			headers: {
 				authorization: `Bearer ${accessToken}`,
@@ -154,7 +160,9 @@ export default async () => {
 		}).json()
 		const { value: clientSecret } = await got({
 			method: 'post',
-			url: `${Config.keycloakUri}/auth/admin/realms/${Config.keycloakRealm}/clients/${clientId}/client-secret`,
+			url: `${Config.get('keycloak.uri')}/auth/admin/realms/${Config.get(
+				'keycloak.realm'
+			)}/clients/${clientId}/client-secret`,
 			headers: {
 				authorization: `Bearer ${accessToken}`,
 			},
@@ -163,8 +171,8 @@ export default async () => {
 		// Replace the old client secret with the new one
 		await replaceInFile({
 			files: ['docker-compose.yaml'],
-			from: new RegExp(`.*${Config.keycloakClientSecretEnvVar}.*`),
-			to: `      - ${Config.keycloakClientSecretEnvVar}=${clientSecret}`,
+			from: new RegExp(`.*${Config.get('keycloak.client-secret-var')}.*`),
+			to: `      - ${Config.get('keycloak.client-secret-var')}=${clientSecret}`,
 		})
 
 		spinner.succeed('Setup keycloak successfully!')
@@ -181,14 +189,16 @@ export default async () => {
 	// Start the registry
 	spinner = spin('Starting the registry...').start()
 	// Run the docker-compose up command
-	await Compose.upOne(Config.containerNames[0]).catch((error: Error) => {
-		spinner.fail(
-			Chalk.red(
-				`Failed to start the registry: ${error.message ?? 'unknown error'}`
+	await Compose.upOne((Config.get('containers.names') as string[])[0]).catch(
+		(error: Error) => {
+			spinner.fail(
+				Chalk.red(
+					`Failed to start the registry: ${error.message ?? 'unknown error'}`
+				)
 			)
-		)
-		process.exit(1)
-	})
+			process.exit(1)
+		}
+	)
 	// Once the up command succeeds, wait 40 seconds for the containers to complete startup
 	await new Promise<void>((resolve) => {
 		setTimeout(resolve, 40000)

@@ -1,7 +1,7 @@
 // Helper methods to interact with docker
 
 import Docker from 'dockerode'
-import * as Config from '../utils/config'
+import Config from '../utils/config'
 
 // Create a docker instance
 const docker = new Docker()
@@ -49,7 +49,9 @@ export const listContainers = async (
 		.then((containers) => {
 			// Filter out those that are not registry-related
 			return containers.filter((container) =>
-				Config.containerImages.some((image) => container.image.includes(image))
+				(Config.get('container.images') as string[]).some((image) =>
+					container.image.includes(image)
+				)
 			)
 		})
 		.then((containers) => {

@@ -1,47 +1,100 @@
 // Configuration for the application
 
+import Fs from 'fs/promises'
 import Conf from 'conf'
 
-import * as PackageMetadata from '../../package.json'
+// Default configuration
+const defaults = {
+	setup: {
+		repo: 'https://github.com/gamemaker1/registry-setup-files',
+	},
+	keycloak: {
+		uri: 'http://kc:8080',
+		user: 'admin',
+		pass: 'admin',
+		realm: 'sunbird-rc',
+		'client-secret-var': 'sunbird_sso_admin_client_secret',
+	},
+	container: {
+		names: ['rg', 'es', 'db', 'kc'],
+		images: [
+			'dockerhub/sunbird-rc-core',
+			'docker.elastic.co/elasticsearch/elasticsearch:7.10.1',
+			'postgres',
+			'dockerhub/ndear-keycloak',
+		],
+	},
+}
 
-// Read the config file first
-const conf = new Conf({
+// Export the Conf instance
+const ConfigManager = new Conf({
 	projectName: 'registry-cli',
 	projectSuffix: '',
-	projectVersion: PackageMetadata.version,
+	schema: {
+		setup: {
+			type: 'object',
+			properties: {
+				repo: {
+					type: 'string',
+				},
+			},
+		},
+		keycloak: {
+			type: 'object',
+			properties: {
+				uri: {
+					type: 'string',
+					default: 'http://kc:8080',
+				},
+				user: {
+					type: 'string',
+					default: 'admin',
+				},
+				pass: {
+					type: 'string',
+					default: 'admin',
+				},
+				realm: {
+					type: 'string',
+					default: 'sunbird-rc',
+				},
+				'client-secret-var': {
+					type: 'string',
+					default: 'sunbird_sso_admin_client_secret',
+				},
+			},
+		},
+		container: {
+			type: 'object',
+			properties: {
+				names: {
+					type: 'array',
+					default: ['rg', 'es', 'db', 'kc'],
+				},
+				images: {
+					type: 'array',
+					default: [
+						'dockerhub/sunbird-rc-core',
+						'docker.elastic.co/elasticsearch/elasticsearch:7.10.1',
+						'postgres',
+						'dockerhub/ndear-keycloak',
+					],
+				},
+			},
+		},
+	},
+	defaults,
 })
 
-// Repository to fetch setup files from
-export const setupFilesRepository: string =
-	(conf.get('setupFilesRepository') as string | undefined) ??
-	'https://github.com/gamemaker1/registry-setup-files.git'
+// If the config file is empty, write the defaults to it
+const configFileContents = await Fs.readFile(ConfigManager.path).catch(
+	(error) => {
+		// Do nothing, instead create and write to the file
+	}
+)
+if (!configFileContents) {
+	await Fs.writeFile(ConfigManager.path, JSON.stringify(defaults, null, 4))
+}
 
-// Names of the images that are used to run the registry
-// IMPORTANT: Make sure the registry image is the first one
-export const containerImages: string[] = (conf.get('containerImages') as
-	| string[]
-	| undefined) ?? [
-	'dockerhub/sunbird-rc-core',
-	'docker.elastic.co/elasticsearch/elasticsearch:7.10.1',
-	'postgres',
-	'dockerhub/ndear-keycloak',
-]
-
-// Names of the containers running the registry
-// IMPORTANT: Make sure the registry container's name is the first one
-export const containerNames: string[] = (conf.get('containerNames') as
-	| string[]
-	| undefined) ?? ['rg', 'es', 'db', 'kc']
-
-// Keycloak related details
-// The URL on which the keycloak server is running
-export const keycloakUri = 'http://kc:8080'
-// The realm to use in keycloak
-export const keycloakRealm = 'sunbird-rc'
-// The client to treat as admin client
-export const keycloakAdminClientId = 'admin-api'
-// The variable to set in the docker compose for the admin secret
-export const keycloakClientSecretEnvVar = 'sunbird_sso_admin_client_secret'
-// The default administrator username and password
-export const keycloakAdminUsername = 'admin'
-export const keycloakAdminPassword = 'admin'
+// Export the Conf instance
+export default ConfigManager

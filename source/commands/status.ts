@@ -5,7 +5,7 @@ import spin from 'ora'
 import doesCommandExist from 'command-exists'
 
 import * as Docker from '../helpers/docker'
-import * as Print from '../utils/print'
+import Print from '../utils/print'
 
 export default async () => {
 	const spinner = spin('Checking environment...').start()
@@ -31,7 +31,7 @@ export default async () => {
 
 	Print.success(Chalk.bold.underline('Registry containers'))
 	for (const container of allContainers) {
-		Print.info(
+		Print.data(
 			`${Chalk.yellow(container.id)}: ${Chalk.magenta(
 				container.name
 			)} - ${Chalk.blue(container.status)} - ${container.ports
