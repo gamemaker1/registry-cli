@@ -22,8 +22,9 @@ body:
   - type: dropdown
     id: cli-version
     attributes:
-      label: Version
-      description: What version of the Registry CLI are you running?
+      label: What version of the Registry CLI are you running?
+      description:
+        Run `registry --version` in terminal to get the version number
       options:
         - 0.0.1
         - 0.0.2
@@ -38,6 +39,7 @@ body:
     id: node-version
     attributes:
       label: What version of Node have you installed?
+      description: Run `node --version` in terminal to get the version number
       options:
         - 13.x or earlier
         - 14.x
