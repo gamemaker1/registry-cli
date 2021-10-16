@@ -142,7 +142,7 @@ To merge the latest changes into your fork anytime, run:
 $ git pull upstream main
 ```
 
-### Create A Branche
+### Create A Branch
 
 To keep your development environment organized, create local branches to hold
 your work. These should be branched directly off of the `main` branch. While
@@ -174,6 +174,8 @@ To make sure you can run your development version of the CLI using the
 ```sh
 # In case you have already installed the CLI from npm, remove it
 $ sudo npm rm -g registry-cli
+# Install dependencies
+$ pnpm install
 # Build the CLI
 $ pnpm build
 # Creates a global symlink to the current directory
