@@ -61,7 +61,9 @@ export default async () => {
 	await clone(Config.setupFilesRepository, currentDirectory).catch(
 		(error: any) => {
 			spinner.fail(
-				Chalk.red(`Failed to download setup files: ${error.message}`)
+				Chalk.red(
+					`Failed to download setup files: ${error.message}. Is the current directory not empty?`
+				)
 			)
 			process.exit(1)
 		}
@@ -110,7 +112,11 @@ export default async () => {
 	// Run the docker-compose up command
 	await Compose.upMany(Config.containerNames.slice(1)).catch((error: any) => {
 		spinner.fail(
-			Chalk.red(`Failed to start dependent services: ${error.message}`)
+			Chalk.red(
+				`Failed to start dependent services: ${
+					error.message ?? error.err ?? 'unknown error'
+				}`
+			)
 		)
 		process.exit(1)
 	})
@@ -175,7 +181,13 @@ export default async () => {
 	spinner = spin('Starting the registry...').start()
 	// Run the docker-compose up command
 	await Compose.upOne(Config.containerNames[0]).catch((error: any) => {
-		spinner.fail(Chalk.red(`Failed to start the registry: ${error.message}`))
+		spinner.fail(
+			Chalk.red(
+				`Failed to start the registry: ${
+					error.message ?? error.err ?? 'unknown error'
+				}`
+			)
+		)
 		process.exit(1)
 	})
 	// Once the up command succeeds, wait 40 seconds for the containers to complete startup
