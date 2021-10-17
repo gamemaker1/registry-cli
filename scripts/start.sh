@@ -6,4 +6,4 @@ export NODE_OPTIONS="--no-warnings --loader ts-node/esm --es-module-specifier-re
 export TS_NODE_PROJECT="config/typescript.json"
 
 # Run the CLI
-$NODE $NODE_OPTIONS source/main.ts -- $@
+$NODE $NODE_OPTIONS source/main.ts $@

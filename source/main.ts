@@ -9,13 +9,19 @@ import stopContainers from './commands/stop'
 import startContainers from './commands/start'
 import showContainerStatus from './commands/status'
 import showOrChangeConfig from './commands/config'
-import * as PackageMetadata from '../package.json'
+import PackageMetadata from '../package.json'
 
 // Create the command-and-option parser
 const program = new Command()
 
-// Set the name
-program.name('registry').version(PackageMetadata.version)
+// Set the name and version
+program
+	.name('registry')
+	.version(
+		PackageMetadata.version,
+		'-v, --version',
+		'view the current version of the CLI'
+	)
 
 // Register all commands
 program
