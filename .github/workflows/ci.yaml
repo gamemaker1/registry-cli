@@ -16,10 +16,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16.x
-      - name: Setup PNPM 6.17.1
+      - name: Setup PNPM 6.17.2
         uses: pnpm/action-setup@v2.0.1
         with:
-          version: 6.17.1
+          version: 6.17.2
       - name: Install dependencies
         run: pnpm install
       - name: Build the CLI
@@ -34,10 +34,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16.x
-      - name: Setup PNPM 6.17.1
+      - name: Setup PNPM 6.17.2
         uses: pnpm/action-setup@v2.0.1
         with:
-          version: 6.17.1
+          version: 6.17.2
       - name: Install dependencies
         run: pnpm install
       - name: Run the tests
