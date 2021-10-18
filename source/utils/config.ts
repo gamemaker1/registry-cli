@@ -15,7 +15,7 @@ const defaults = {
 		realm: 'sunbird-rc',
 		'client-secret-var': 'sunbird_sso_admin_client_secret',
 	},
-	container: {
+	containers: {
 		names: ['rg', 'es', 'db', 'kc'],
 		images: [
 			'dockerhub/sunbird-rc-core',
@@ -64,7 +64,7 @@ const ConfigManager = new Conf({
 				},
 			},
 		},
-		container: {
+		containers: {
 			type: 'object',
 			properties: {
 				names: {

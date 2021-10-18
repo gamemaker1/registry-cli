@@ -24,6 +24,22 @@ $ registry init
 
 This will setup and start a registry using Docker on your machine.
 
+> The default setup files used to create a registry can be found
+> [here](https://github.com/gamemaker1/registry-setup-files). If you wish to use
+> a different set of files to setup your registry, specify the remote git repo's
+> URL using the `config` command before running the `init` command:
+>
+> ```
+> $ registry config setup.repo <url-to-setup-repo>
+> ```
+>
+> You will also need to change the container names and images if you have
+> changed them in `docker-compose.yaml`:
+>
+> ```
+> $ registry config container.images <url-to-setup-repo>
+> ```
+
 ## Understanding Schemas
 
 Each registry can store data as entities. The example registry setup by the CLI

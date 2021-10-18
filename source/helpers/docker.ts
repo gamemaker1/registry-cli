@@ -49,7 +49,7 @@ export const listContainers = async (
 		.then((containers) => {
 			// Filter out those that are not registry-related
 			return containers.filter((container) =>
-				(Config.get('container.images') as string[]).some((image) =>
+				(Config.get('containers.images') as string[]).some((image) =>
 					container.image.includes(image)
 				)
 			)
