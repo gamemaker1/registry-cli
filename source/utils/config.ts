@@ -14,6 +14,7 @@ const defaults = {
 		pass: 'admin',
 		realm: 'sunbird-rc',
 		'client-secret-var': 'sunbird_sso_admin_client_secret',
+		'admin-client-id': 'admin-api',
 	},
 	containers: {
 		names: ['rg', 'es', 'db', 'kc'],
