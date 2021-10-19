@@ -21,6 +21,7 @@
 		"start": "sh scripts/start.sh",
 		"build": "sh scripts/build.sh",
 		"watch": "sh scripts/watch.sh",
+		"release": "sh scripts/release.sh",
 		"fix:eslint": "sh scripts/fix/eslint.sh",
 		"fix:format": "sh scripts/fix/prettier.sh",
 		"check:eslint": "sh scripts/check/eslint.sh",
