@@ -320,3 +320,8 @@ one maintainer. After that, if there are no objections from other contributors,
 the pull request can be merged.
 
 **Congratulations and thanks a lot for your contribution!**
+
+## For Maintainers
+
+To release a new version of the CLI, run `pnpm release`. If releasing manually,
+remember to `build` the CLI before publishing it!
